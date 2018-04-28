@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.job.admin.dao.UserDao">
+	
+	<resultMap id="User" type="com.xxl.job.admin.core.model.User" >
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+	    <result column="account" property="account" />
+	    <result column="password" property="password" />
+	    <result column="salt" property="passwordSalt" />
+	</resultMap>
+	
+	<select id="getByAccount" parameterType="String" resultMap="User">
+        select * from tb_user where account=#{account}
+    </select>
+
+    <select id="getRoles" parameterType="String" resultType="String">
+        select r.role from tb_user u,tb_role r,tb_user_role ur where u.id=ur.user_id and r.id=ur.role_id and u.account=#{account}
+    </select>
+
+    <select id="getPermissions" parameterType="String" resultType="String">
+        select p.permission 
+        from tb_user u,tb_user_role ur,tb_role_permission rp,tb_permission p 
+        where u.id=ur.user_id and ur.role_id=rp.role_id and rp.permission_id=p.id and u.account=#{account}
+    </select>
+	
+	<insert id="register" parameterType="com.xxl.job.admin.core.model.User" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO tb_user (name,account,password,salt) 
+        VALUES (#{name},#{account},#{password},#{passwordSalt});
+    </insert>
+	
+	
+	<!-- <select id="pageList" parameterType="java.util.HashMap" resultMap="User">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_JOB_QRTZ_TRIGGER_INFO AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="jobGroup gt 0">
+				AND t.job_group = #{jobGroup}
+			</if>
+			<if test="jobDesc != null and jobDesc != ''">
+				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
+			</if>
+			<if test="executorHandler != null and executorHandler != ''">
+				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
+			</if>
+		</trim>
+		ORDER BY id DESC
+		LIMIT #{offset}, #{pagesize}
+	</select>
+	
+	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
+		SELECT count(1)
+		FROM XXL_JOB_QRTZ_TRIGGER_INFO AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="jobGroup gt 0">
+				AND t.job_group = #{jobGroup}
+			</if>
+			<if test="jobDesc != null and jobDesc != ''">
+				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
+			</if>
+			<if test="executorHandler != null and executorHandler != ''">
+				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
+			</if>
+		</trim>
+	</select> -->
+
+	
+
+</mapper>
