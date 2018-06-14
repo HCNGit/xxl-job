@@ -11,6 +11,8 @@ public class User {
     private String name; // 真实姓名
 
     private String account; // 登录帐号
+    
+    private int roleId;
 
     private String password;
 
@@ -22,6 +24,15 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public String getName() {

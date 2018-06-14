@@ -8,6 +8,9 @@
 
 package com.xxl.job.admin.service.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +47,30 @@ public class UserServiceImpl implements UserService {
         
         return userDao.register(user);
     }
+    
+    public int update(User user){
+        
+        return userDao.update(user);
+    }
+    
+    public int resetPassword(User user){
+        return userDao.resetPassword(user);
+    }
 
+    @Override
+    public Map<String, Object> pageList(int start, int length, int roleId, String nameOrAccount) {
+
+        // page list
+        List<User> list = userDao.pageList(start, length, roleId,nameOrAccount);
+        int list_count = userDao.pageListCount(start, length, roleId,nameOrAccount);
+        
+        
+        
+        // package result
+        Map<String, Object> maps = new HashMap<String, Object>();
+        maps.put("recordsTotal", list_count);       // 总记录数
+        maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
+        maps.put("data", list);                     // 分页列表
+        return maps;
+    }
 }

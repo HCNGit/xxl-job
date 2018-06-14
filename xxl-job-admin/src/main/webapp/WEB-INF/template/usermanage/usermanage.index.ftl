@@ -18,74 +18,66 @@
 	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
-			<h1>用户管理</h1>
+			<h1>人员管理</h1>
 		</section>
 
 		<!-- Main content -->
 	    <section class="content">
 			
 			<div class="row">
-				<div class="col-xs-12">
-					<div class="box">
-			            <div class="box-header">
-							<h3 class="box-title">${I18n.jobgroup_list}</h3>&nbsp;&nbsp;
-                            <button class="btn btn-info btn-xs pull-left2 add" >${I18n.jobgroup_add}</button>
-						</div>
-			            <div class="box-body">
-			              	<table id="joblog_list" class="table table-bordered table-striped display" width="100%" >
-				                <thead>
-					            	<tr>
-                                        <#--<th name="id" >ID</th>-->
-                                        <th name="order" >${I18n.jobgroup_field_order}</th>
-                                        <th name="appName" >AppName</th>
-                                        <th name="title" >${I18n.jobgroup_field_title}</th>
-                                        <th name="addressType" >${I18n.jobgroup_field_addressType}</th>
-                                        <th name="registryList" >OnLine ${I18n.jobgroup_field_registryList}</th>
-                                        <th name="operate" >${I18n.system_opt}</th>
-					                </tr>
-				                </thead>
-                                <tbody>
-								<#if list?exists && list?size gt 0>
-								<#list list as group>
-									<tr>
-                                        <#--<td>${group.id}</td>-->
-                                        <td>${group.order}</td>
-                                        <td>${group.appName}</td>
-                                        <td>${group.title}</td>
-                                        <td><#if group.addressType==0>${I18n.jobgroup_field_addressType_0}<#else>${I18n.jobgroup_field_addressType_1}</#if></td>
-                                        <td>
-                                            <#if group.registryList?exists>
-                                                <#list group.registryList as item>
-                                                    <span class="badge bg-green" title="${item}" >
-                                                        <#if item?length gt 35>
-                                                            ${item?substring(0, 35)}...
-                                                        <#else>
-                                                            ${item}
-                                                        </#if>
-                                                    </span>
-                                                    <br>
-                                                </#list>
-                                            </#if>
-                                        </td>
-										<td>
-                                            <button class="btn btn-warning btn-xs update"
-                                                    id="${group.id}"
-                                                    appName="${group.appName}"
-                                                    title="${group.title}"
-                                                    order="${group.order}"
-                                                    addressType="${group.addressType}"
-                                                    addressList="${group.addressList}" >${I18n.system_opt_edit}</button>
-                                            <button class="btn btn-danger btn-xs remove" id="${group.id}" >${I18n.system_opt_del}</button>
-										</td>
-									</tr>
-								</#list>
-								</#if>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
+			    <div class="col-xs-1"></div>
+			    <div class="col-xs-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">角色</span>
+                        <select class="form-control" id="roleId">
+                            <option value="0" >全部</option>
+                            <option value="1" >超级管理员</option>
+                            <option value="2" >管理员</option>
+                            <option value="3" >游客</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">姓名/帐号</span>
+                        <input type="text" class="form-control" id="nameOrAccount" >
+                    </div>
+                </div>
+				<div class="col-xs-1">
+                    <button class="btn btn-block btn-info" id="searchBtn">${I18n.system_search}</button>
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn btn-block btn-success add" type="button">新增用户</button>
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn btn-block btn-danger add" type="button">批量删除</button>
+                </div>
 			</div>
+			
+			<div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header hide">
+                            <h3 class="box-title">人员列表</h3>
+                        </div>
+                        <div class="box-body" >
+                            <table id="user_list" class="table table-bordered table-striped" width="100%" >
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="allCheck"/></th>
+                                        <th>姓名</th>
+                                        <th>帐号</th>
+                                        <th>角色</th>
+                                        <th>${I18n.system_opt}</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 	    </section>
 	</div>
 
@@ -94,40 +86,33 @@
         <div class="modal-dialog ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >${I18n.jobgroup_add}</h4>
+                    <h4 class="modal-title" >添加人员</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">AppName<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="appName" placeholder="${I18n.system_please_input}AppName" maxlength="64" ></div>
+                            <label for="lastname" class="col-sm-2 control-label">姓名<font color="red">*</font></label>
+                            <div class="col-sm-6"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}姓名" maxlength="64" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_title}<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="${I18n.system_please_input}${I18n.jobgroup_field_title}" maxlength="12" ></div>
+                            <label for="lastname" class="col-sm-2 control-label">帐号<font color="red">*</font></label>
+                            <div class="col-sm-6"><input type="text" class="form-control" name="account" placeholder="${I18n.system_please_input}帐号" maxlength="32" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_order}<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.jobgroup_field_order}" maxlength="50" ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_addressType}<font color="red">*</font></label>
-                            <div class="col-sm-10">
-                                <input type="radio" name="addressType" value="0" checked />${I18n.jobgroup_field_addressType_0}
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                <input type="radio" name="addressType" value="1" />${I18n.jobgroup_field_addressType_1}
+                            <label for="lastname" class="col-sm-2 control-label">角色<font color="red">*</font></label>
+                            <div class="col-sm-6">
+                            <select class="form-control" name="roleId">
+                                <option value="1" >超级管理员</option>
+                                <option value="2" >管理员</option>
+                                <option value="3" >游客</option>
+                            </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_registryList}<font color="red">*</font></label>
-                            <div class="col-sm-10">
-                                <textarea class="textarea" name="addressList" maxlength="512" placeholder="${I18n.jobgroup_field_registryList_placeholder}" readonly="readonly" style="background-color:#eee; width: 100%; height: 100px; font-size: 14px; line-height: 10px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                            </div>
-                        </div>
+                        
                         <hr>
-                        <div class="form-group">
+                        <div class="form-group" style="text-align:center">
                             <div class="col-sm-offset-3 col-sm-6">
-                                <button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
+                                <button type="submit" class="btn btn-primary"  >${I18n.system_ok}</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
                             </div>
                         </div>
@@ -142,38 +127,31 @@
         <div class="modal-dialog ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >${I18n.jobgroup_edit}</h4>
+                    <h4 class="modal-title" >更改信息</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">AppName<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="appName" placeholder="${I18n.system_please_input}AppName" maxlength="64" ></div>
+                            <label for="lastname" class="col-sm-2 control-label">姓名<font color="red">*</font></label>
+                            <div class="col-sm-6"><input type="text" class="form-control" name="name" maxlength="64" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_title}<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="${I18n.system_please_input}${I18n.jobgroup_field_title}" maxlength="12" ></div>
+                            <label for="lastname" class="col-sm-2 control-label">帐号<font color="red">*</font></label>
+                            <div class="col-sm-6"><input type="text" class="form-control" name="account" maxlength="32" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_order}<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.jobgroup_field_order}" maxlength="50" ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_addressType}<font color="red">*</font></label>
-                            <div class="col-sm-10">
-                                <input type="radio" name="addressType" value="0" />${I18n.jobgroup_field_addressType_0}
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                <input type="radio" name="addressType" value="1" />${I18n.jobgroup_field_addressType_1}
+                            <label for="lastname" class="col-sm-2 control-label">角色<font color="red">*</font></label>
+                            <div class="col-sm-6">
+                            <select class="form-control" name="roleId">
+                                <option value="1" >超级管理员</option>
+                                <option value="2" >管理员</option>
+                                <option value="3" >游客</option>
+                            </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">${I18n.jobgroup_field_registryList}<font color="red">*</font></label>
-                            <div class="col-sm-10">
-                                <textarea class="textarea" name="addressList" maxlength="512" placeholder="${I18n.jobgroup_field_registryList_placeholder}" readonly="readonly" style="background-color:#eee; width: 100%; height: 100px; font-size: 14px; line-height: 10px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                            </div>
-                        </div>
+                        
                         <hr>
-                        <div class="form-group">
+                        <div class="form-group" style="text-align:center">
                             <div class="col-sm-offset-3 col-sm-6">
                                 <button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
@@ -196,6 +174,6 @@
 <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <#-- jquery.validate -->
 <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
-<script src="${request.contextPath}/static/js/jobgroup.index.1.js"></script>
+<script src="${request.contextPath}/static/js/usermanage.index.1.js"></script>
 </body>
 </html>

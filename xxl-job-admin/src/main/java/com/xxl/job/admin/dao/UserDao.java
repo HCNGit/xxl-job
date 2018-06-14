@@ -8,11 +8,25 @@
 
 package com.xxl.job.admin.dao;
 
+import java.util.List;
 import java.util.Set;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.xxl.job.admin.core.model.User;
 
 public interface UserDao {
+    
+    
+    public List<User> pageList(@Param("offset") int offset,
+                                     @Param("pagesize") int pagesize,
+                                     @Param("roleId") int roleId,
+                                     @Param("nameOrAccount") String nameOrAccount);
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("roleId") int roleId,
+                             @Param("nameOrAccount") String nameOrAccount);
+    
     
     public User getByAccount(String account);
 
@@ -23,4 +37,8 @@ public interface UserDao {
     public Set<String> getPermissions(String account);
     
     public int register(User user);
+    
+    public int update(User user);
+    
+    public int resetPassword(User user);
 }

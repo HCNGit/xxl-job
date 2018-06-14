@@ -9,6 +9,7 @@
 	    <result column="account" property="account" />
 	    <result column="password" property="password" />
 	    <result column="salt" property="passwordSalt" />
+	    <result column="role_id" property="roleId" />
 	</resultMap>
 	
 	<select id="getByAccount" parameterType="String" resultMap="User">
@@ -16,55 +17,71 @@
     </select>
 
     <select id="getRoles" parameterType="String" resultType="String">
-        select r.role from tb_user u,tb_role r,tb_user_role ur where u.id=ur.user_id and r.id=ur.role_id and u.account=#{account}
+        select r.role from tb_user u,tb_role r where u.role_id= r.id and u.account=#{account}
     </select>
 
     <select id="getPermissions" parameterType="String" resultType="String">
         select p.permission 
-        from tb_user u,tb_user_role ur,tb_role_permission rp,tb_permission p 
-        where u.id=ur.user_id and ur.role_id=rp.role_id and rp.permission_id=p.id and u.account=#{account}
+        from tb_user u,tb_role_permission rp,tb_permission p 
+        where u.role_id=rp.role_id and rp.permission_id=p.id and u.account=#{account}
     </select>
 	
 	<insert id="register" parameterType="com.xxl.job.admin.core.model.User" useGeneratedKeys="true" keyProperty="id" >
-        INSERT INTO tb_user (name,account,password,salt) 
-        VALUES (#{name},#{account},#{password},#{passwordSalt});
+        INSERT INTO tb_user (name,account,password,salt,role_id) 
+        VALUES (#{name},#{account},#{password},#{passwordSalt},#{roleId});
     </insert>
 	
 	
-	<!-- <select id="pageList" parameterType="java.util.HashMap" resultMap="User">
-		SELECT <include refid="Base_Column_List" />
-		FROM XXL_JOB_QRTZ_TRIGGER_INFO AS t
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="User">
+		SELECT distinct u.id,u.name,u.account,u.role_id
+		FROM tb_user u
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="jobGroup gt 0">
-				AND t.job_group = #{jobGroup}
+			<if test="roleId gt 0">
+				AND u.role_id = #{roleId}
 			</if>
-			<if test="jobDesc != null and jobDesc != ''">
-				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
+			<if test="nameOrAccount != null and nameOrAccount != ''">
+				AND u.name like CONCAT(CONCAT('%', #{nameOrAccount}), '%')
 			</if>
-			<if test="executorHandler != null and executorHandler != ''">
-				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
+			<if test="nameOrAccount != null and nameOrAccount != ''">
+				OR u.account like CONCAT(CONCAT('%', #{nameOrAccount}), '%')
 			</if>
 		</trim>
-		ORDER BY id DESC
+		ORDER BY u.id DESC
 		LIMIT #{offset}, #{pagesize}
 	</select>
 	
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM XXL_JOB_QRTZ_TRIGGER_INFO AS t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="jobGroup gt 0">
-				AND t.job_group = #{jobGroup}
-			</if>
-			<if test="jobDesc != null and jobDesc != ''">
-				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
-			</if>
-			<if test="executorHandler != null and executorHandler != ''">
-				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
-			</if>
-		</trim>
-	</select> -->
+		FROM tb_user u
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="roleId gt 0">
+                AND u.role_id = #{roleId}
+            </if>
+            <if test="nameOrAccount != null and nameOrAccount != ''">
+                AND u.name like CONCAT(CONCAT('%', #{nameOrAccount}), '%')
+            </if>
+            <if test="nameOrAccount != null and nameOrAccount != ''">
+                OR u.account like CONCAT(CONCAT('%', #{nameOrAccount}), '%')
+            </if>
+        </trim>
+	</select>
 
+    <update id="update" parameterType="com.xxl.job.admin.core.model.User">
+        update tb_user
+        set 
+            name = #{name},
+            account = #{account},
+            role_id = #{roleId}
+        where id = #{id}
+    </update>
+    
+    <update id="resetPassword" parameterType="com.xxl.job.admin.core.model.User">
+        update tb_user
+        set 
+            password = #{password},
+            salt = #{passwordSalt}
+        where id = #{id}
+    </update>
 	
 
 </mapper>
